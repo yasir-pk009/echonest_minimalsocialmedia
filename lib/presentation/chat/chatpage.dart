@@ -1,28 +1,39 @@
 import 'package:echonest/presentation/colors/contantColors.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:echonest/data/chat_repo.dart'; // Import your chat repository
+import 'package:echonest/presentation/chat/widget/chat_message.dart';
 
 class ChatPage extends StatelessWidget {
   final String username;
+  final String reciverID;
 
-  const ChatPage({super.key, required this.username});
+  ChatPage({super.key, required this.username, required this.reciverID});
+
+  final ChatService chatService = ChatService();
+  final messageController = TextEditingController();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  void sendMessage() async {
+    if (messageController.text.isNotEmpty) {
+      await chatService.sendMessage(reciverID, messageController.text);
+      messageController.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: appbarIconsColor),
-      
         title: Text(
           username,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0,
-            color: Colors.white
-          ),
+              fontWeight: FontWeight.bold, fontSize: 18.0, color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: loginPagetextcolor, // Set your desired app bar color
-        elevation: 0, // Remove the shadow
+        backgroundColor: loginPagetextcolor,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -31,22 +42,36 @@ class ChatPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200], // Set your desired chat background color
-                  borderRadius: BorderRadius.circular(10.0),
+              child: StreamBuilder(
+                stream: chatService.getMessages(
+                   _firebaseAuth.currentUser!.email.toString(),
+                 reciverID
                 ),
-                padding: const EdgeInsets.all(16.0),
-                child: const SingleChildScrollView(
-                  // Use SingleChildScrollView to allow scrolling if the content is too long
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      // Your chat messages go here
-                      // Example: ChatMessage(text: 'Hello, how are you?'),
-                    ],
-                  ),
-                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text("${snapshot.error}"));
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.docs.isEmpty) {
+                    return  Center(child: Text("No Posts Yet ${snapshot.data!.docs}"));
+                  } else {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.all(16.0),
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final post = snapshot.data!.docs[index];
+                          return ChatMessage(text: post["messages"],emailToAlign: post["senderId"] == _firebaseAuth.currentUser!.uid ? "senderEmail": "reciverID");
+                        },
+                      ),
+                    );
+                  }
+                },
               ),
             ),
             const SizedBox(height: 8.0),
@@ -59,9 +84,10 @@ class ChatPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
                   children: <Widget>[
-                    const Expanded(
+                    Expanded(
                       child: TextField(
-                        decoration: InputDecoration(
+                        controller: messageController,
+                        decoration: const InputDecoration(
                           hintText: 'Type a message...',
                           border: InputBorder.none,
                         ),
@@ -70,7 +96,8 @@ class ChatPage extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.send),
                       onPressed: () {
-                        // Handle send button press
+                        sendMessage();
+                        messageController.clear();
                       },
                     ),
                   ],
@@ -79,24 +106,6 @@ class ChatPage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Example: You can create a separate widget for displaying chat messages
-class ChatMessage extends StatelessWidget {
-  final String text;
-
-  const ChatMessage({super.key, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 16.0),
       ),
     );
   }

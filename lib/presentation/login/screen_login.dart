@@ -1,5 +1,5 @@
-import 'package:echonest/data/login/auth_repo.dart';
-import 'package:echonest/domain/model/user_model.dart';
+import 'package:echonest/data/auth_repo.dart';
+import 'package:echonest/model/user_model.dart';
 import 'package:echonest/presentation/colors/contantColors.dart';
 import 'package:echonest/presentation/login/widgets/imagetile.dart';
 import 'package:echonest/presentation/login/widgets/signbotton.dart';

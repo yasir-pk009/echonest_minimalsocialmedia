@@ -1,7 +1,5 @@
 import 'package:echonest/firebase_options.dart';
-import 'package:echonest/presentation/colors/contantColors.dart';
 import 'package:echonest/presentation/login/screen_authentication.dart';
-import 'package:echonest/themes/dart_theme.dart';
 import 'package:echonest/themes/light_them.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

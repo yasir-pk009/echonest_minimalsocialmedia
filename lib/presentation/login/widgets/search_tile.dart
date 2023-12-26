@@ -9,11 +9,12 @@ class SearchPageTile extends StatelessWidget {
  
   final String user;
   final imageUrl;
+  final void Function()? onTap;
 
-  const SearchPageTile({
+   SearchPageTile({
     super.key,
    required this.imageUrl,
-    required this.user,
+    required this.user,required this.onTap,
   });
 
 
@@ -21,8 +22,10 @@ class SearchPageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => ChatPage(username: user))),
+      onTap: onTap,
+      //
+      // () => Navigator.of(context).push(
+      //     MaterialPageRoute(builder: (context) => ChatPage(username: user, reciverID: user,))),
       child: Card(
         elevation: 4, // Add elevation to the card
         shape: RoundedRectangleBorder(

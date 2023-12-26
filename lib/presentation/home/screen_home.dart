@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:echonest/data/auth_repo.dart';
 import 'package:echonest/data/user_posts.dart';
-import 'package:echonest/domain/model/post_model.dart';
+import 'package:echonest/model/post_model.dart';
 import 'package:echonest/presentation/home/search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:echonest/data/login/auth_repo.dart';
 import 'package:echonest/presentation/colors/contantColors.dart';
 import 'package:echonest/presentation/login/widgets/drawer/drawer.dart';
 import 'package:echonest/presentation/pages/profile.dart';

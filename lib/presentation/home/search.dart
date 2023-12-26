@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:echonest/presentation/chat/chatpage.dart';
 import 'package:echonest/presentation/colors/contantColors.dart';
 import 'package:echonest/presentation/login/widgets/search_tile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Search extends StatefulWidget {
@@ -25,8 +27,7 @@ class _SearchState extends State<Search> {
     _usersStream = FirebaseFirestore.instance
         .collection('Users-collection')
         .orderBy("email")
-        .startAt([searchName]).endAt(["$searchName\uf8ff"])
-        .snapshots();
+        .startAt([searchName]).endAt(["$searchName\uf8ff"]).snapshots();
   }
 
   @override
@@ -34,15 +35,12 @@ class _SearchState extends State<Search> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-      
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: loginPagetextcolor,
-        title: 
-          const Text(
-            "Contacts",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-       
+        title: const Text(
+          "Contacts",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       ),
       body: Column(
         children: [
@@ -93,10 +91,15 @@ class _SearchState extends State<Search> {
                       return Padding(
                         padding: const EdgeInsets.all(6.0),
                         child: SearchPageTile(
+                          onTap: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                                username: post["username"], reciverID: post["email"],),
+                          )),
                           imageUrl: post["profilepic"] == ""
                               ? "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.508103245.1699588812&semt=ais"
                               : post["profilepic"],
-                          user: post["username"],
+                          user: post["email"] == FirebaseAuth.instance.currentUser!.email ? "You" :  post["username"]  ,
                         ),
                       );
                     },

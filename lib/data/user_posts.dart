@@ -3,7 +3,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:echonest/domain/model/post_model.dart';
+import 'package:echonest/model/post_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -62,10 +62,10 @@ class UserRepo {
 
 
   takePhotoPost(ImageSource source)async{
-    final ImagePicker _imagePicker = ImagePicker();
-    XFile? _file = await _imagePicker.pickImage(source: source);
-    if(_file != null){
-      return File(_file.path);
+    final ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: source);
+    if(file != null){
+      return File(file.path);
     }else {
       print("no image selected");
 

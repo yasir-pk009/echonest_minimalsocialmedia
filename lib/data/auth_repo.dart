@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print, prefer_const_constructors, use_build_context_synchronously, duplicate_ignore
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:echonest/domain/model/user_model.dart';
+import 'package:echonest/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';

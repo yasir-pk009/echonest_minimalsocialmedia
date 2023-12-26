@@ -38,6 +38,7 @@ dependencies:
   cached_network_image:
   filter_list:
   search_page:
+  provider:
   
 
 
